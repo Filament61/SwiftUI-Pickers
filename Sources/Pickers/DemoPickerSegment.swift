@@ -10,7 +10,6 @@ import SwiftUI
 struct DemoPickerSegment: View {
     
     @State var title: String
-    @State var desc: String
     
     var body: some View {
         VStack(spacing: 4.0) {
@@ -19,15 +18,8 @@ struct DemoPickerSegment: View {
                 .fixedSize()
                 .foregroundColor(.black)
                 .font(.body)
-            if (!desc.isEmpty) {
-                Text(desc)
-                    .foregroundColor(.gray)
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .allowsTightening(true)
-            }
+                .lineLimit(1)
         }
-        .frame(height: 28.0)
+//        .frame(height: 28.0)
     }
 }

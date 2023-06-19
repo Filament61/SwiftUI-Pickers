@@ -1,14 +1,14 @@
 //
 //  ContentView.swift
-//  SegmentedPicker
+//  SwiftUI-Pickers
 //
-//  Created by Alexander Kraev on 10.02.2022.
+//  Created by Serge Gori on 19/06/2023.
 //
 
 import SwiftUI
 
 struct ContentView: View {
-    @State private var titles: [String] = ["1", "Title 2", "Title 3", "Title 4"]
+    @State private var titles: [String] = ["Petite", "Garde", "Sans", "Contre"]
     
     @State var selectedIndex: Int? = nil
     
@@ -20,7 +20,7 @@ struct ContentView: View {
     
     @ViewBuilder
     private func getSegment(_ title: String) -> some View {
-        DemoPickerSegment(title: title, desc: "")
+        DemoPickerSegment(title: title)
     }
     
     @ViewBuilder

@@ -113,11 +113,10 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 }
             }
         }
-                                    .frame(height: height)
-                                    .background(.gray.opacity(0.3))
-                                    .cornerRadius(8)
-                                    .animation(.easeInOut(duration: 0.3))
-    }
+        .frame(height: height)
+        .background(.gray.opacity(0.3))
+        .cornerRadius(8)
+        .animation(.easeInOut(duration: 0.3), value: self.selectedIndex)    }
     
     /// Crée un séparateur à placer entre deux segments.
     private func customDivider(opacity: Double) -> some View {
