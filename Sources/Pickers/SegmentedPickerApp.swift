@@ -1,8 +1,8 @@
 ////
 ////  SegmentedPickerApp.swift
-////  SegmentedPicker
+////  SwiftUI-Pickers
 ////
-////  Created by Alexander Kraev on 10.02.2022.
+////  Created by Serge Gori on 19/06/2023.
 ////
 //
 //import SwiftUI
