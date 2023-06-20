@@ -78,6 +78,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                     .alignmentGuide(.horizontalCenterAlignment) { dimensions in
                         dimensions[HorizontalAlignment.center]
                     }
+                
             }
             
             HStack(spacing: 0) {
@@ -116,13 +117,14 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
         .frame(height: height)
         .background(.gray.opacity(0.3))
         .cornerRadius(8)
-        .animation(.easeInOut(duration: 0.3), value: self.selectedIndex)    }
+        .animation(.easeInOut(duration: 0.3), value: self.selectedIndex)
+    }
     
     /// Crée un séparateur à placer entre deux segments.
     private func customDivider(opacity: Double) -> some View {
         Divider()
             .background(Color.gray)
-            .frame(height: height * 0.5)
+            .frame(height: height * 0.6)
             .opacity(opacity)
     }
 }
@@ -174,7 +176,7 @@ struct SegmentedPicker_Previews: PreviewProvider {
 //    case stroked
 //    case capsule
 //    case custom(cornerRadius: CGFloat)
-//    
+//
 //    var selection: any View {
 //        switch self {
 //        case .default:
@@ -191,6 +193,6 @@ struct SegmentedPicker_Previews: PreviewProvider {
 //        case .custom(cornerRadius: _):
 //            return EmptyView()
 //        }
-//        
+//
 //    }
 //}

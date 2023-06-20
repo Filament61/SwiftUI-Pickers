@@ -14,12 +14,12 @@ struct DemoPickerSegment: View {
     var body: some View {
         VStack(spacing: 4.0) {
             Text(title)
-//                .kerning(0.3)
+            //                .kerning(0.3)
                 .fixedSize()
                 .foregroundColor(.black)
-                .font(.body)
+                .font(.caption)
                 .lineLimit(1)
         }
-//        .frame(height: 28.0)
+        //        .frame(height: 28.0)
     }
 }
