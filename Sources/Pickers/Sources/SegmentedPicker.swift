@@ -38,7 +38,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private let selection: () -> Selection?
     private let content: (Data.Element, Bool) -> Content
     private let selectionAlignment: VerticalAlignment
-    private let action: () -> Void
+    private let action: (Int) -> Void
     
     
     
@@ -52,7 +52,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     public init(_ data: Data,
                 selectedIndex: Binding<Data.Index?>,
                 selectionAlignment: VerticalAlignment = .center,
-                action: @escaping () -> Void,
+                action: @escaping (Int) -> Void,
                 @ViewBuilder content: @escaping (Data.Element, Bool) -> Content,
                 @ViewBuilder selection: @escaping () -> Selection?) {
         
@@ -93,7 +93,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 ForEach(data.indices, id: \.self) { index in
                     // Segments
                     //                    Button(action: { selectedIndex = selectedIndex == index ? nil : index },
-                    Button(action: action,
+                    Button(action: { action(index) },
                            label: {
                         HStack {
                             Spacer()
@@ -146,7 +146,7 @@ public extension SegmentedPicker where Selection == EmptyView {
     ///   - content: Une closure retournant la vue pour chaque segment.
     init(_ data: Data,
          selectedIndex: Binding<Data.Index?>,
-         action: @escaping () -> Void,
+         action: @escaping (Int) -> Void,
          @ViewBuilder content: @escaping (Data.Element, Bool) -> Content)
     {
         self.data = data
@@ -166,7 +166,7 @@ struct SegmentedPicker_Previews: PreviewProvider {
         
         let tabs = ["One", "Two", "Three", "Four"]
         @State var selectedIndex: Int? = nil
-        let action: () -> Void = { }
+        let action: (Int) -> Void = { _ in }
         
         
         

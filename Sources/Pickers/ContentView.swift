@@ -12,7 +12,7 @@ struct ContentView: View {
     
     @State var selectedIndex: Int? = nil
     
-    let action: () -> Void = {}
+    let action: (Int) -> Void = { index in print("Selected index: \(index)") }
     
     
     
