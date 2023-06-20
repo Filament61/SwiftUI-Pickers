@@ -39,6 +39,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private let content: (Data.Element, Bool) -> Content
     private let selectionAlignment: VerticalAlignment
     
+    
     /// Initialisation de `SegmentedPicker`.
     ///
     /// - Parameters:
@@ -65,22 +66,25 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
         ZStack(alignment: Alignment(horizontal: .horizontalCenterAlignment,
                                     vertical: selectionAlignment)) {
             // Sélection
-            if let selectedIndex = selectedIndex {
-                selection()
-                RoundedRectangle(cornerRadius: 8)
-                    .foregroundColor(.gray.opacity(0.3))
-                    .shadow(color: .gray.opacity(0.1),
-                            radius: 8,
-                            x: 0,
-                            y: 3)
-                    .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
-                           height: height - 4)
-                    .alignmentGuide(.horizontalCenterAlignment) { dimensions in
-                        dimensions[HorizontalAlignment.center]
-                    }
+            HStack {
+                if let selectedIndex = selectedIndex {
+                    selection()
+                    RoundedRectangle(cornerRadius: 8)
+                        .foregroundColor(.gray.opacity(0.3))
+                        .shadow(color: .gray.opacity(0.1),
+                                radius: 8,
+                                x: 0,
+                                y: 3)
+                        .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
+                               height: height - 4)
+                        .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+                            dimensions[HorizontalAlignment.center]
+                        }
+                }
                 
             }
-            
+            .animation(.easeInOut(duration: 0.25), value: self.selectedIndex)
+
             HStack(spacing: 0) {
                 ForEach(data.indices, id: \.self) { index in
                     // Segments
@@ -115,9 +119,8 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
             }
         }
         .frame(height: height)
-        .background(.gray.opacity(0.3))
+        .background(.gray.opacity(0.25))
         .cornerRadius(8)
-        .animation(.easeInOut(duration: 0.3), value: self.selectedIndex)
     }
     
     /// Crée un séparateur à placer entre deux segments.
