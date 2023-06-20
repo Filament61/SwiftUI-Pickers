@@ -12,6 +12,10 @@ struct ContentView: View {
     
     @State var selectedIndex: Int? = nil
     
+    let action: () -> Void = {}
+    
+    
+    
     
     var body: some View {
         setPicker(titles: Array(titles)).padding()
@@ -28,6 +32,7 @@ struct ContentView: View {
         SegmentedPicker(titles,
                         selectedIndex: Binding(get: { selectedIndex },
                                                set: { selectedIndex = $0 }),
+                        action: action,
                         content: { title, isSelected in getSegment(title) })
     }
 }

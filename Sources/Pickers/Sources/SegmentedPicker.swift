@@ -38,6 +38,8 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private let selection: () -> Selection?
     private let content: (Data.Element, Bool) -> Content
     private let selectionAlignment: VerticalAlignment
+    private let action: () -> Void
+    
     
     
     /// Initialisation de `SegmentedPicker`.
@@ -50,6 +52,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     public init(_ data: Data,
                 selectedIndex: Binding<Data.Index?>,
                 selectionAlignment: VerticalAlignment = .center,
+                action: @escaping () -> Void,
                 @ViewBuilder content: @escaping (Data.Element, Bool) -> Content,
                 @ViewBuilder selection: @escaping () -> Selection?) {
         
@@ -57,6 +60,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
         self.content = content
         self.selection = selection
         self.selectionAlignment = selectionAlignment
+        self.action = action
         self._selectedIndex = selectedIndex
         self._frames = State(wrappedValue: Array(repeating: .zero,
                                                  count: data.count))
@@ -84,11 +88,12 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 
             }
             .animation(.easeInOut(duration: 0.25), value: self.selectedIndex)
-
+            
             HStack(spacing: 0) {
                 ForEach(data.indices, id: \.self) { index in
                     // Segments
-                    Button(action: { selectedIndex = selectedIndex == index ? nil : index },
+                    //                    Button(action: { selectedIndex = selectedIndex == index ? nil : index },
+                    Button(action: action,
                            label: {
                         HStack {
                             Spacer()
@@ -118,9 +123,9 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 }
             }
         }
-        .frame(height: height)
-        .background(.gray.opacity(0.25))
-        .cornerRadius(8)
+                                    .frame(height: height)
+                                    .background(.gray.opacity(0.25))
+                                    .cornerRadius(8)
     }
     
     /// Crée un séparateur à placer entre deux segments.
@@ -141,12 +146,14 @@ public extension SegmentedPicker where Selection == EmptyView {
     ///   - content: Une closure retournant la vue pour chaque segment.
     init(_ data: Data,
          selectedIndex: Binding<Data.Index?>,
+         action: @escaping () -> Void,
          @ViewBuilder content: @escaping (Data.Element, Bool) -> Content)
     {
         self.data = data
         self.content = content
         self.selection = { nil }
         self.selectionAlignment = .center
+        self.action = action
         self._selectedIndex = selectedIndex
         self._frames = State(wrappedValue: Array(repeating: .zero,
                                                  count: data.count))
@@ -159,9 +166,12 @@ struct SegmentedPicker_Previews: PreviewProvider {
         
         let tabs = ["One", "Two", "Three", "Four"]
         @State var selectedIndex: Int? = nil
+        let action: () -> Void = { }
+        
+        
         
         var body: some View {
-            SegmentedPicker(tabs, selectedIndex: $selectedIndex) { tab, isSelected in
+            SegmentedPicker(tabs, selectedIndex: $selectedIndex, action: action) { tab, isSelected in
                 Text(tab)
             }
         }
