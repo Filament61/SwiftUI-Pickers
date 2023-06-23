@@ -32,8 +32,6 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     @Binding private var selectedIndex: Data.Index?
     @State var height: CGFloat = 28.0
     
-    
-    
     private let data: Data
     private let selection: () -> Selection?
     private let content: (Data.Element, Bool) -> Content
