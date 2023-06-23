@@ -30,7 +30,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     
     @State private var frames: [CGRect]
     @Binding private var selectedIndex: Data.Index?
-    @State var height: CGFloat = 28.0
+    @State var height: CGFloat = 32.0
     
     private let data: Data
     private let selection: () -> Selection?
@@ -89,8 +89,6 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
             
             HStack(spacing: 0) {
                 ForEach(data.indices, id: \.self) { index in
-                    // Segments
-                    //                    Button(action: { selectedIndex = selectedIndex == index ? nil : index },
                     Button(action: { action(index) },
                            label: {
                         HStack {
@@ -122,8 +120,8 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
             }
         }
                                     .frame(height: height)
-                                    .background(.gray.opacity(0.25))
-                                    .cornerRadius(8)
+                                    .background(.gray.opacity(0.3))
+                                    .cornerRadius(6)
     }
     
     /// Crée un séparateur à placer entre deux segments.
