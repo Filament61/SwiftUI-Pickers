@@ -42,13 +42,13 @@ struct ContentView: View {
 }
 
 public enum Action {
-    static func normal(index: Int) -> Int {
+    public static func normal(index: Int) -> Int {
         return index
     }
-    static func toggle(index: Int, selectedIndex: Int?) -> Int? {
+    public static func toggle(index: Int, selectedIndex: Int?) -> Int? {
         return selectedIndex == index ? nil : index
     }
-    static func custom(index: Int, selectedIndex: Int?) -> Int? {
+    public static func custom(index: Int, selectedIndex: Int?) -> Int? {
         return (ContentView.customAction ?? Self.toggle)(index, selectedIndex)
     }
 }
