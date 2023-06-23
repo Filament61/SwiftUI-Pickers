@@ -41,7 +41,7 @@ struct ContentView: View {
     }
 }
 
-enum Action {
+public enum Action {
     static func normal(index: Int) -> Int {
         return index
     }
