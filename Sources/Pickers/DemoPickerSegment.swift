@@ -15,10 +15,10 @@ struct DemoPickerSegment: View {
         VStack(spacing: 4.0) {
             Text(title)
             //                .kerning(0.3)
-                .fixedSize()
+//                .fixedSize()
                 .foregroundColor(.black)
                 .font(.caption)
-                .lineLimit(1)
+//                .lineLimit(1)
         }
         //        .frame(height: 28.0)
     }

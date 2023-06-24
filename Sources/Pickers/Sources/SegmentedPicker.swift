@@ -85,7 +85,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 }
                 
             }
-            .animation(.spring().speed(1), value: self.selectedIndex)
+            .animation(.spring().speed(1.2), value: self.selectedIndex)
             
             HStack(spacing: 0) {
                 ForEach(data.indices, id: \.self) { index in
@@ -118,7 +118,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                             }
                         }
                     }
-                    .animation(.spring().speed(2), value: self.selectedIndex)
+                    .animation(.spring().speed(2.2), value: self.selectedIndex)
                 }
             }
         }
@@ -131,7 +131,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private func customDivider(opacity: Double) -> some View {
         Divider()
             .background(Color.gray)
-            .frame(height: height * 0.6)
+            .frame(height: height * 0.55)
             .opacity(opacity)
     }
 }
