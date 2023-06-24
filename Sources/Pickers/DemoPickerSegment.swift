@@ -17,7 +17,7 @@ struct DemoPickerSegment: View {
             //                .kerning(0.3)
 //                .fixedSize()
                 .foregroundColor(.black)
-                .font(.caption)
+                .font(.body)
 //                .lineLimit(1)
         }
         //        .frame(height: 28.0)

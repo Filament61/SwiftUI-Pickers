@@ -73,7 +73,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                     selection()
                     RoundedRectangle(cornerRadius: 6)
                         .foregroundColor(.white.opacity(0.8))
-                        .shadow(color: .gray.opacity(0.1),
+                        .shadow(color: .gray.opacity(0.4),
                                 radius: 8,
                                 x: 0,
                                 y: 3)
@@ -123,7 +123,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
             }
         }
                                     .frame(height: height)
-                                    .background(.gray.opacity(0.3))
+                                    .background(.gray.opacity(0.25))
                                     .cornerRadius(8)
     }
     
