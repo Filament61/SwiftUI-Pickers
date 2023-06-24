@@ -11,8 +11,7 @@ import SwiftUI
 struct SegmentedPickerApp: View {
     let myCustomAction: (Int, Int?) -> Int? = { index, selectedIndex in
         // Do something with selectedIndex and index
-        return 1
-    }
+        return selectedIndex == index ? nil : index    }
     
     let contentView: ContentView
     

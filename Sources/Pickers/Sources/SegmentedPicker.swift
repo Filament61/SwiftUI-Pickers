@@ -71,8 +71,8 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
             HStack {
                 if let selectedIndex = selectedIndex {
                     selection()
-                    RoundedRectangle(cornerRadius: 8)
-                        .foregroundColor(.gray.opacity(0.3))
+                    RoundedRectangle(cornerRadius: 6)
+                        .foregroundColor(.white.opacity(0.8))
                         .shadow(color: .gray.opacity(0.1),
                                 radius: 8,
                                 x: 0,
@@ -85,7 +85,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 }
                 
             }
-            .animation(.easeInOut(duration: 0.25), value: self.selectedIndex)
+            .animation(.spring().speed(1), value: self.selectedIndex)
             
             HStack(spacing: 0) {
                 ForEach(data.indices, id: \.self) { index in
@@ -109,19 +109,22 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                         dimensions[HorizontalAlignment.center]
                     }
                     // Séparateurs
-                    if  index < (data.indices.count - 1) {
-                        if let selectedIndex = selectedIndex, index >= 0 {
-                            customDivider(opacity: index == selectedIndex - 1 || index == selectedIndex ? 0.0 : 1.0)
-                        } else {
-                            customDivider(opacity: 1.0)
+                    HStack {
+                        if  index < (data.indices.count - 1) {
+                            if let selectedIndex = selectedIndex, index >= 0 {
+                                customDivider(opacity: index == selectedIndex - 1 || index == selectedIndex ? 0.0 : 1.0)
+                            } else {
+                                customDivider(opacity: 1.0)
+                            }
                         }
                     }
+                    .animation(.spring().speed(2), value: self.selectedIndex)
                 }
             }
         }
                                     .frame(height: height)
                                     .background(.gray.opacity(0.3))
-                                    .cornerRadius(6)
+                                    .cornerRadius(8)
     }
     
     /// Crée un séparateur à placer entre deux segments.
@@ -163,8 +166,6 @@ struct SegmentedPicker_Previews: PreviewProvider {
         let tabs = ["One", "Two", "Three", "Four"]
         @State var selectedIndex: Int? = nil
         let action: (Int) -> Void = { _ in }
-        
-        
         
         var body: some View {
             SegmentedPicker(tabs, selectedIndex: $selectedIndex, action: action) { tab, isSelected in
