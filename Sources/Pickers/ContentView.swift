@@ -33,7 +33,7 @@ struct ContentView: View {
     
     @ViewBuilder
     private func setPicker(titles: [String]) -> some View {
-        SegmentedPicker(titles,
+        SegmentedPicker(options: titles,
                         selectedIndex: Binding(get: { selectedIndex },
                                                set: { selectedIndex = $0 }),
                         action: handleSelection,

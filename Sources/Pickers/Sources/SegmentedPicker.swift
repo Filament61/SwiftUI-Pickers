@@ -13,28 +13,28 @@ import SwiftUI
 /// Créez un `SegmentedPicker` en passant un tableau de données pour les segments, un indice de segment sélectionné et deux closures pour définir le contenu des segments et le style de la sélection.
 ///
 /// - Parameters:
-///   - data: Un tableau de `Element` qui détermine le nombre de segments dans le sélecteur.
-///   - selectedIndex: Un `Binding` vers l'indice du segment actuellement sélectionné dans `data`. Si cet argument est `nil`, aucun segment n'est sélectionné.
-///   - content: Une closure qui prend un `Element` de `data` et un `Bool` indiquant si le segment est sélectionné, et retourne la vue à afficher pour le segment.
+///   - options: Un tableau de `Element` qui détermine les options dans le sélecteur.
+///   - selectedIndex: Un `Binding` vers l'indice du segment actuellement sélectionné dans `options`. Si cet argument est `nil`, aucune option n'est sélectionnée.
+///   - content: Une closure qui prend une `Element` de `options` et un `Bool` indiquant si le segment est sélectionné, et retourne la vue à afficher pour le segment.
 ///   - selection: Une closure qui retourne une vue qui est utilisée pour styliser le segment sélectionné. Si `nil`, aucun style n'est appliqué.
 ///
-/// - Note: Les segments sont affichés dans l'ordre dans lequel ils apparaissent dans `data`.
+/// - Note: Les segments sont affichés dans l'ordre dans lequel ils apparaissent dans `options`.
 ///   - `Element`: Le type de données que le `SegmentedPicker` affiche.
 ///   - `Content`: Le type de vue à afficher pour chaque segment.
 ///   - `Selection`: Le type de vue à utiliser pour styliser le segment sélectionné.
 ///
 public struct SegmentedPicker<Element, Content, Selection>: View where Content: View,
-                                                                       Selection: View {
+                                                                      Selection: View {
     
-    public typealias Data = [Element]
-    
+    public typealias Options = [Element]
+
     @State private var frames: [CGRect]
-    @Binding private var selectedIndex: Data.Index?
+    @Binding private var selectedIndex: Options.Index?
     @State var height: CGFloat = 32.0
     
-    private let data: Data
+    private let options: Options
     private let selection: () -> Selection?
-    private let content: (Data.Element, Bool) -> Content
+    private let content: (Options.Element, Bool) -> Content
     private let selectionAlignment: VerticalAlignment
     private let action: (Int) -> Void
     
@@ -43,25 +43,25 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     /// Initialisation de `SegmentedPicker`.
     ///
     /// - Parameters:
-    ///   - data: Un tableau de données représentant chaque segment.
+    ///   - options: Un tableau de données représentant chaque segment.
     ///   - selectedIndex: Une liaison à l'index du segment actuellement sélectionné.
     ///   - content: Une closure retournant la vue pour chaque segment.
     ///   - selection: Une closure retournant la vue utilisée pour styliser le segment sélectionné.
-    public init(_ data: Data,
-                selectedIndex: Binding<Data.Index?>,
+    public init(options: Options,
+                selectedIndex: Binding<Options.Index?>,
                 selectionAlignment: VerticalAlignment = .center,
                 action: @escaping (Int) -> Void,
-                @ViewBuilder content: @escaping (Data.Element, Bool) -> Content,
+                @ViewBuilder content: @escaping (Options.Element, Bool) -> Content,
                 @ViewBuilder selection: @escaping () -> Selection?) {
         
-        self.data = data
+        self.options = options
         self.content = content
         self.selection = selection
         self.selectionAlignment = selectionAlignment
         self.action = action
         self._selectedIndex = selectedIndex
         self._frames = State(wrappedValue: Array(repeating: .zero,
-                                                 count: data.count))
+                                                 count: options.count))
     }
     
     public var body: some View {
@@ -87,13 +87,14 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
             }
             .animation(.spring().speed(1.2), value: self.selectedIndex)
             
+            //Options
             HStack(spacing: 0) {
-                ForEach(data.indices, id: \.self) { index in
+                ForEach(options.indices, id: \.self) { index in
                     Button(action: { action(index) },
                            label: {
                         HStack {
                             Spacer()
-                            content(data[index], selectedIndex == index)
+                            content(options[index], selectedIndex == index)
                             Spacer()
                         }
                         .padding(.vertical, 12.0)
@@ -110,7 +111,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                     }
                     // Séparateurs
                     HStack {
-                        if  index < (data.indices.count - 1) {
+                        if  index < (options.indices.count - 1) {
                             if let selectedIndex = selectedIndex, index >= 0 {
                                 customDivider(opacity: index == selectedIndex - 1 || index == selectedIndex ? 0.0 : 1.0)
                             } else {
@@ -140,22 +141,22 @@ public extension SegmentedPicker where Selection == EmptyView {
     /// Initialisation de `SegmentedPicker`.
     ///
     /// - Parameters:
-    ///   - data: Un tableau de données représentant chaque segment.
+    ///   - options: Un tableau de données représentant chaque segment c'est à dire chaque option.
     ///   - selectedIndex: Une liaison à l'index du segment actuellement sélectionné.
     ///   - content: Une closure retournant la vue pour chaque segment.
-    init(_ data: Data,
-         selectedIndex: Binding<Data.Index?>,
+    init(options: Options,
+         selectedIndex: Binding<Options.Index?>,
          action: @escaping (Int) -> Void,
-         @ViewBuilder content: @escaping (Data.Element, Bool) -> Content)
+         @ViewBuilder content: @escaping (Options.Element, Bool) -> Content)
     {
-        self.data = data
+        self.options = options
         self.content = content
         self.selection = { nil }
         self.selectionAlignment = .center
         self.action = action
         self._selectedIndex = selectedIndex
         self._frames = State(wrappedValue: Array(repeating: .zero,
-                                                 count: data.count))
+                                                 count: options.count))
     }
 }
 
@@ -168,7 +169,7 @@ struct SegmentedPicker_Previews: PreviewProvider {
         let action: (Int) -> Void = { _ in }
         
         var body: some View {
-            SegmentedPicker(tabs, selectedIndex: $selectedIndex, action: action) { tab, isSelected in
+            SegmentedPicker(options: tabs, selectedIndex: $selectedIndex, action: action) { tab, isSelected in
                 Text(tab)
             }
         }
