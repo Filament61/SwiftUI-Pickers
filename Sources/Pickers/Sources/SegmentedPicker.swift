@@ -38,7 +38,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private let selectionAlignment: VerticalAlignment
     private let action: (Int) -> Void
     
-    private var selectionStyle: SelectionStyle = .capsule
+    private var selectionStyle: SelectionStyle = .stroked
     
     /// Initialisation de `SegmentedPicker`.
     ///
@@ -166,7 +166,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     }
     private func strokedSelectionStyle() -> AnyView {
         guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
-        return AnyView(RoundedRectangle(cornerRadius: 6)
+        return AnyView(strokedRectangle()
             .foregroundColor(.white.opacity(0.8))
             .shadow(color: .gray.opacity(0.4),
                     radius: 8,
