@@ -38,7 +38,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private let selectionAlignment: VerticalAlignment
     private let action: (Int) -> Void
     
-    private var selectionStyle: SelectionStyle = .regular
+    private var selectionStyle: SelectionStyle = .capsule
     
     /// Initialisation de `SegmentedPicker`.
     ///
@@ -76,7 +76,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 case .capsule: capsuleSelectionStyle()
                 case .custom(let anyView): customSelectionStyle(anyView)
                 }
-                capsuleSelectionStyle()
+//                capsuleSelectionStyle()
 //                select.pkk
 //                regularSelection(selected: selectedIndex)
 //                if let selectedIndex = selectedIndex {
