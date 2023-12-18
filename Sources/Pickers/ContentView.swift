@@ -18,7 +18,7 @@ struct ContentView: View {
     @State var selectedIndex: Int? = nil
     
     func handleSelection(index: Int) {
-        selectedIndex = Action.custom(index: index, selectedIndex: selectedIndex)
+        selectedIndex = Action.toggle(index: index, selectedIndex: selectedIndex)
     }
     
     var body: some View {
@@ -38,18 +38,6 @@ struct ContentView: View {
                                                set: { selectedIndex = $0 }),
                         action: handleSelection,
                         content: { title, isSelected in getSegment(title) })
-    }
-}
-
-public enum Action {
-    public static func normal(index: Int) -> Int {
-        return index
-    }
-    public static func toggle(index: Int, selectedIndex: Int?) -> Int? {
-        return selectedIndex == index ? nil : index
-    }
-    public static func custom(index: Int, selectedIndex: Int?) -> Int? {
-        return (ContentView.customAction ?? Self.toggle)(index, selectedIndex)
     }
 }
 

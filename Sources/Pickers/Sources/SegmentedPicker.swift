@@ -38,7 +38,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private let selectionAlignment: VerticalAlignment
     private let action: (Int) -> Void
     
-    
+    private var selectionStyle: SelectionStyle = .regular
     
     /// Initialisation de `SegmentedPicker`.
     ///
@@ -63,33 +63,45 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
         self._frames = State(wrappedValue: Array(repeating: .zero,
                                                  count: options.count))
     }
+//    let select: SelectionType = .regular
     
     public var body: some View {
         ZStack(alignment: Alignment(horizontal: .horizontalCenterAlignment,
                                     vertical: selectionAlignment)) {
-            // Sélection
+            // Sélection ---------------------------------------------
             HStack {
-                if let selectedIndex = selectedIndex {
-                    selection()
-                    RoundedRectangle(cornerRadius: 6)
-                        .foregroundColor(.white.opacity(0.8))
-                        .shadow(color: .gray.opacity(0.4),
-                                radius: 8,
-                                x: 0,
-                                y: 3)
-                        .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
-                               height: height - 4)
-                        .alignmentGuide(.horizontalCenterAlignment) { dimensions in
-                            dimensions[HorizontalAlignment.center]
-                        }
+                switch selectionStyle {
+                case .regular: regularSelectionStyle()
+                case .stroked: strokedSelectionStyle()
+                case .capsule: capsuleSelectionStyle()
+                case .custom(let anyView): customSelectionStyle(anyView)
                 }
-                
+                regularSelectionStyle()
+//                select.pkk
+//                regularSelection(selected: selectedIndex)
+//                if let selectedIndex = selectedIndex {
+//                    selection()
+//                    RoundedRectangle(cornerRadius: 6)
+//                        .foregroundColor(.white.opacity(0.8))
+//                        .shadow(color: .gray.opacity(0.4),
+//                                radius: 8,
+//                                x: 0,
+//                                y: 3)
+//                        .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
+//                               height: height - 4)
+//                        .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+//                            dimensions[HorizontalAlignment.center]
+//                        }
+//                }
+//                
             }
             .animation(.spring().speed(1.2), value: self.selectedIndex)
             
-            //Options
+            //Options ------------------------------------------------
             HStack(spacing: 0) {
                 ForEach(options.indices, id: \.self) { index in
+                    
+                    // Segments --------------------------------------
                     Button(action: { action(index) },
                            label: {
                         HStack {
@@ -109,10 +121,11 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                                     isActive: selectedIndex == index) { dimensions in
                         dimensions[HorizontalAlignment.center]
                     }
-                    // Séparateurs
+                    
+                    // Séparateurs -----------------------------------
                     HStack {
                         if  index < (options.indices.count - 1) {
-                            if let selectedIndex = selectedIndex, index >= 0 {
+                            if let selectedIndex = selectedIndex {
                                 customDivider(opacity: index == selectedIndex - 1 || index == selectedIndex ? 0.0 : 1.0)
                             } else {
                                 customDivider(opacity: 1.0)
@@ -123,9 +136,9 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 }
             }
         }
-                                    .frame(height: height)
-                                    .background(.gray.opacity(0.25))
-                                    .cornerRadius(8)
+        .frame(height: height)
+        .background(.gray.opacity(0.25))
+        .cornerRadius(8)
     }
     
     /// Crée un séparateur à placer entre deux segments.
@@ -135,7 +148,156 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
             .frame(height: height * 0.55)
             .opacity(opacity)
     }
+    
+    // MARK: - Styles de sélection
+    private func regularSelectionStyle() -> AnyView {
+        guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
+        return AnyView(RoundedRectangle(cornerRadius: 6)
+            .foregroundColor(.white.opacity(0.8))
+            .shadow(color: .gray.opacity(0.4),
+                    radius: 8,
+                    x: 0,
+                    y: 3)
+            .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
+                   height: height - 4)
+            .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+                dimensions[HorizontalAlignment.center]
+            })
+    }
+    private func strokedSelectionStyle() -> AnyView {
+        guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
+        return AnyView(RoundedRectangle(cornerRadius: 6)
+            .foregroundColor(.white.opacity(0.8))
+            .shadow(color: .gray.opacity(0.4),
+                    radius: 8,
+                    x: 0,
+                    y: 3)
+            .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
+                   height: height - 4)
+            .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+                dimensions[HorizontalAlignment.center]
+            })
+    }
+    private func capsuleSelectionStyle() -> AnyView {
+        guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
+        return AnyView(Capsule()
+            .foregroundColor(.white.opacity(0.8))
+            .shadow(color: .gray.opacity(0.4),
+                    radius: 8,
+                    x: 0,
+                    y: 3)
+            .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
+                   height: height - 4)
+            .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+                dimensions[HorizontalAlignment.center]
+            })
+    }
+    private func customSelectionStyle(_ anyView: @escaping () -> AnyView) -> AnyView {
+        guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
+        return AnyView(RoundedRectangle(cornerRadius: 6)
+            .foregroundColor(.white.opacity(0.8))
+            .shadow(color: .gray.opacity(0.4),
+                    radius: 8,
+                    x: 0,
+                    y: 3)
+            .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
+                   height: height - 4)
+            .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+                dimensions[HorizontalAlignment.center]
+            })
+    }
 }
+
+
+
+
+
+
+//enum SelectionType {
+//
+//    typealias Options = [Any]
+//
+//    static var selectedIndex: Options.Index? = nil
+//    static var options: Options = [ ]
+//    static var frames: [CGRect] = Array(repeating: .zero,
+//                                        count: options.count)
+//    static var height: CGFloat = 0.0
+//
+//    case regular
+//
+//
+//    var pkk: some View {
+//        switch self {
+//        case .regular:
+//            return selection()
+//        }
+//    }
+//    func selection() -> some View {
+//        switch self {
+//        case .regular:
+//            guard let selectedIndex = SelectionType.selectedIndex else { return AnyView(EmptyView()) }
+//            return AnyView(
+//                RoundedRectangle(cornerRadius: 6)
+//                    .foregroundColor(.white.opacity(0.8))
+//                    .shadow(color: .gray.opacity(0.4),
+//                            radius: 8,
+//                            x: 0,
+//                            y: 3)
+//                    .frame(width: { SelectionType.frames[selectedIndex].width > 0 ?
+//                        SelectionType.frames[selectedIndex].width - 4 : 0 }(),
+//                           height: SelectionType.height - 4)
+//                    .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+//                        dimensions[HorizontalAlignment.center]
+//                    }
+//            )
+//        }
+//    }
+//}
+//extension SelectionType {
+//    init(options: Options, selectedIndex: Options.Index?, height: CGFloat) {
+//        SelectionType.selectedIndex = selectedIndex
+//        SelectionType.options = options
+//        SelectionType.height = height
+//    }
+//}
+
+//public struct MyPicker<Element>: View {
+//
+//    public typealias Options = [Element]
+//
+//    @State private var frames: [CGRect]
+//    @Binding private var selectedIndex: Options.Index?
+//    @State var height: CGFloat = 32.0
+//
+//    private let options: Options
+//    private let selection: SelectionType<Options>
+//    private let content: (Options.Element, Bool) -> Content
+//    private let selectionAlignment: VerticalAlignment
+//    private let action: (Int) -> Void
+//
+//    init(options: Options,
+//         selectedIndex: Binding<Options.Index?>,
+//         selectionAlignment: VerticalAlignment = .center,
+//         action: @escaping (Int) -> Void,
+//         @ViewBuilder content: @escaping (Options.Element, Bool) -> Content,
+//         selection: SelectionType<Options>)
+//
+//    public var body: some View {
+//        return SegmentedPicker(options: options,
+//                               selectedIndex: $selectedIndex,
+//                               selectionAlignment: .center,
+//                               action: <#T##(Int) -> Void#>,
+//                               content: <#T##(Array<Element>.Element, Bool) -> View#>,
+//                               selection: SelectionType<Options>.regular(selectedIndex: selectedIndex).selection)
+//    }
+//
+//
+//}
+
+
+
+
+
 
 public extension SegmentedPicker where Selection == EmptyView {
     /// Initialisation de `SegmentedPicker`.
@@ -160,21 +322,40 @@ public extension SegmentedPicker where Selection == EmptyView {
     }
 }
 
+//public extension SegmentedPicker {
+//    public init(options: Options,
+//                selectedIndex: Binding<Options.Index?>,
+//                selectionAlignment: VerticalAlignment = .center,
+//                action: @escaping (Int) -> Void,
+//                @ViewBuilder content: @escaping (Options.Element, Bool) -> Content,
+//                selection: @escaping () -> Selection?) {
+//
+//        self.options = options
+//        self.content = content
+//        self.selection = selection
+//        self.selectionAlignment = selectionAlignment
+//        self.action = action
+//        self._selectedIndex = selectedIndex
+//        self._frames = State(wrappedValue: Array(repeating: .zero,
+//                                                 count: options.count))
+//    }
+//}
+
 struct SegmentedPicker_Previews: PreviewProvider {
-    
+
     struct SegmentedPickerExample: View {
-        
+
         let tabs = ["One", "Two", "Three", "Four"]
         @State var selectedIndex: Int? = nil
         let action: (Int) -> Void = { _ in }
-        
+
         var body: some View {
             SegmentedPicker(options: tabs, selectedIndex: $selectedIndex, action: action) { tab, isSelected in
                 Text(tab)
             }
         }
     }
-    
+
     static var previews: some View {
         SegmentedPickerExample()
             .padding()
@@ -182,21 +363,27 @@ struct SegmentedPicker_Previews: PreviewProvider {
     }
 }
 
-//enum SegmentedPickerStyle {
-//    case `default`
-//    case stroked
-//    case capsule
-//    case custom(cornerRadius: CGFloat)
-//
-//    var selection: any View {
+public enum SegmentedPickerStyle {
+    case regular
+    case stroked
+    case capsule
+    case custom(cornerRadius: CGFloat)
+
+//    var selection: some View {
 //        switch self {
-//        case .default:
-//            return RoundedRectangle(cornerRadius: 8)
-//                .foregroundColor(.gray.opacity(0.3))
-//                .shadow(color: .gray.opacity(0.1),
+//        case .regular:
+//            guard let index = selectedIndex else { return AnyView(EmptyView()) }
+//            return AnyView(RoundedRectangle(cornerRadius: 6)
+//                .foregroundColor(.white.opacity(0.8))
+//                .shadow(color: .gray.opacity(0.4),
 //                        radius: 8,
 //                        x: 0,
 //                        y: 3)
+//                .frame(width: { frames[index].width > 0 ? frames[index].width - 4 : 0 }(),
+//                       height: height - 4)
+//                .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+//                    dimensions[HorizontalAlignment.center]
+//                })
 //        case .stroked:
 //            return EmptyView()
 //        case .capsule:
@@ -206,4 +393,10 @@ struct SegmentedPicker_Previews: PreviewProvider {
 //        }
 //
 //    }
-//}
+}
+public enum SelectionStyle {
+    case regular
+    case stroked
+    case capsule
+    case custom(() -> AnyView)
+}
