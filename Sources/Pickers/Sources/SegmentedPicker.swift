@@ -76,7 +76,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 case .capsule: capsuleSelectionStyle()
                 case .custom(let anyView): customSelectionStyle(anyView)
                 }
-                regularSelectionStyle()
+                capsuleSelectionStyle()
 //                select.pkk
 //                regularSelection(selected: selectedIndex)
 //                if let selectedIndex = selectedIndex {
