@@ -38,7 +38,7 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private let selectionAlignment: VerticalAlignment
     private let action: (Int) -> Void
     
-    private var selectionStyle: SelectionStyle = .regular
+    private var selectionStyle: SelectionStyle = .capsule
 //    (
         //        guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
 //        { AnyView(
@@ -213,17 +213,19 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     }
     private func capsuleSelectionStyle() -> AnyView {
         guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
-        return AnyView(Capsule()
-            .foregroundColor(.white.opacity(0.8))
-            .shadow(color: .gray.opacity(0.4),
-                    radius: 8,
-                    x: 0,
-                    y: 3)
-            .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
-                   height: height - 4)
-            .alignmentGuide(.horizontalCenterAlignment) { dimensions in
-                dimensions[HorizontalAlignment.center]
-            })
+        return AnyView(
+            Capsule()
+                .foregroundColor(.white.opacity(0.8))
+                .shadow(color: .gray.opacity(0.4),
+                        radius: 8,
+                        x: 0,
+                        y: 3)
+//                .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
+//                       height: height - 4)
+//                .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+//                    dimensions[HorizontalAlignment.center]
+//                }
+        )
     }
     private func customSelectionStyle(_ selectionView: @escaping () -> AnyView) -> AnyView {
         guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
