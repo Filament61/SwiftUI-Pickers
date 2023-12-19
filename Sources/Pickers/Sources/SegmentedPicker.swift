@@ -24,10 +24,10 @@ import SwiftUI
 ///   - `Selection`: Le type de vue à utiliser pour styliser le segment sélectionné.
 ///
 public struct SegmentedPicker<Element, Content, Selection>: View where Content: View,
-                                                                      Selection: View {
+                                                                       Selection: View {
     
     public typealias Options = [Element]
-
+    
     @State private var frames: [CGRect]
     @Binding private var selectedIndex: Options.Index?
     @State var height: CGFloat = 32.0
@@ -38,17 +38,18 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     private let selectionAlignment: VerticalAlignment
     private let action: (Int) -> Void
     
-    private var selectionStyle: SelectionStyle = .custom(
+    private var selectionStyle: SelectionStyle = .regular
+//    (
         //        guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
-        AnyView(
-            VStack(spacing: 0) {
-                Spacer()
-                Rectangle()
-                    .fill(Color.red)
-                    .frame(height: 3)
-            }
-        )
-    )
+//        { AnyView(
+//            VStack(spacing: 0) {
+//                Spacer()
+//                Rectangle()
+//                    .fill(Color.red)
+//                    .frame(height: 3)
+//            }
+//        ) }
+//    )
     
     /// Initialisation de `SegmentedPicker`.
     ///
@@ -80,41 +81,37 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                                     vertical: selectionAlignment)) {
             // Sélection ---------------------------------------------
             HStack {
-                switch selectionStyle {
-                case .regular: regularSelectionStyle()
-                case .underlined: underlinedSelectionStyle()
-                case .stroked: strokedSelectionStyle()
-                case .capsule: capsuleSelectionStyle()
-                case .custom(let anyView): customSelectionStyle(anyView)                
-//                        .foregroundColor(.white.opacity(0.8))
-//                        .shadow(color: .gray.opacity(0.4),
-//                                radius: 8,
-//                                x: 0,
-//                                y: 3)
-//                        .frame(width: { frames[selectedIndex!].width > 0 ? frames[selectedIndex!].width - 4 : 0 }(),
-//                               height: height - 4)
-//                        .alignmentGuide(.horizontalCenterAlignment) { dimensions in
-//                            dimensions[HorizontalAlignment.center]
-//                        }
+                if let selectedIndex = selectedIndex {
+                    AnyView(
+                        Group {
+                            switch selectionStyle {
+                            case .regular: regularSelectionStyle()
+                            case .underlined:
+                                VStack(spacing: 0) {
+                                    Spacer()
+                                    Rectangle()
+                                        .fill(Color.black)
+                                        .frame(height: 1)
+                                }
+                            case .stroked:
+                                strokedSelectionStyle()
+                            case .capsule:
+                                capsuleSelectionStyle()
+                            case .custom(let selectionViewClosure):
+                                if let selectionView = selectionViewClosure() {
+                                    customSelectionStyle({ selectionView as! AnyView })
+                                }
+                            }
+                        }
+                            .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
+                                   height: height - 4)
+                            .alignmentGuide(.horizontalCenterAlignment) { dimensions in
+                                dimensions[HorizontalAlignment.center]
+                            }
+                    )
+                } else {
+                    AnyView(EmptyView())
                 }
-//                capsuleSelectionStyle()
-//                select.pkk
-//                regularSelection(selected: selectedIndex)
-//                if let selectedIndex = selectedIndex {
-//                    selection()
-//                    RoundedRectangle(cornerRadius: 6)
-//                        .foregroundColor(.white.opacity(0.8))
-//                        .shadow(color: .gray.opacity(0.4),
-//                                radius: 8,
-//                                x: 0,
-//                                y: 3)
-//                        .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
-//                               height: height - 4)
-//                        .alignmentGuide(.horizontalCenterAlignment) { dimensions in
-//                            dimensions[HorizontalAlignment.center]
-//                        }
-//                }
-//                
             }
             .animation(.spring().speed(1.2), value: self.selectedIndex)
             
@@ -172,19 +169,13 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
     
     // MARK: - Styles de sélection
     private func regularSelectionStyle() -> AnyView {
-        guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
-        return AnyView(
-            RoundedRectangle(cornerRadius: 6)
-                .foregroundColor(.white.opacity(0.8))
-                .shadow(color: .gray.opacity(0.4),
-                        radius: 8,
-                        x: 0,
-                        y: 3)
-                .frame(width: { frames[selectedIndex].width > 0 ? frames[selectedIndex].width - 4 : 0 }(),
-                       height: height - 4)
-                .alignmentGuide(.horizontalCenterAlignment) { dimensions in
-                    dimensions[HorizontalAlignment.center]
-                })
+        return AnyView(RoundedRectangle(cornerRadius: 6)
+            .foregroundColor(.white.opacity(0.8))
+            .shadow(color: .gray.opacity(0.4),
+                    radius: 8,
+                    x: 0,
+                    y: 3)
+        )
     }
     private func underlinedSelectionStyle() -> AnyView {
         guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
@@ -234,10 +225,9 @@ public struct SegmentedPicker<Element, Content, Selection>: View where Content: 
                 dimensions[HorizontalAlignment.center]
             })
     }
-    private func customSelectionStyle(_ anyView: AnyView) -> AnyView {
+    private func customSelectionStyle(_ selectionView: @escaping () -> AnyView) -> AnyView {
         guard let selectedIndex = selectedIndex else { return AnyView(EmptyView()) }
-        return AnyView(anyView
-//            RoundedRectangle(cornerRadius: 6)
+        return AnyView(selectionView()
             .foregroundColor(.white.opacity(0.8))
             .shadow(color: .gray.opacity(0.4),
                     radius: 8,
@@ -443,5 +433,5 @@ public enum SelectionStyle {
     case underlined
     case stroked
     case capsule
-    case custom(AnyView)
+    case custom( () -> (any View)?)
 }
