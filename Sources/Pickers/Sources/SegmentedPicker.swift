@@ -435,5 +435,5 @@ public enum SelectionStyle {
     case underlined
     case stroked
     case capsule
-    case custom( () -> (any View)?)
+    case custom(() -> (any View)?)
 }
